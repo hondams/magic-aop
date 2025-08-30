@@ -38,10 +38,17 @@ public class LoggingInterceptor {
             logger.info("[AOP START] {} args={}",//
                 methodSignature, toText(method, args));
             Object result = methodInvoker.call();
-            logger.info("[AOP END  ] {} result={} elapsedTime={}ms",//
-                methodSignature,//
-                toText(result),//
-                TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
+            if (method.getReturnType() == void.class) {
+                logger.info("[AOP END  ] {} elapsedTime={}ms",//
+                    methodSignature,//
+                    TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
+            } else {
+                logger.info("[AOP END  ] {} result={} elapsedTime={}ms",//
+                    methodSignature,//
+                    toText(result),//
+                    TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
+            }
+
             return result;
         } catch (Exception e) {
             logger.error("[AOP ERROR] {} elapsedTime={}ms",//
