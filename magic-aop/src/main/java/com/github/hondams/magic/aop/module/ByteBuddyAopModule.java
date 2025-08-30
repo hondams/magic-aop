@@ -11,8 +11,7 @@ public class ByteBuddyAopModule implements MagicAopModule {
     @Override
     public void install(Instrumentation inst) {
         AgentBuilder agentBuilder = new AgentBuilder.Default()//
-            .type(ElementMatchers.named(
-                "com.github.hondams.magic.aop.MagicAopSampleApplicationRunner"))
+            .type(ElementMatchers.nameStartsWith("com.github.hondams.magic.aop"))
             .transform((builder, typeDescription, classLoader, module, protectionDomain) ->//
                 builder.method(ElementMatchers.any())
                     .intercept(MethodDelegation.to(LoggingInterceptor.class)));

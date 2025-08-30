@@ -35,15 +35,15 @@ public class LoggingInterceptor {
 
         long startTime = System.currentTimeMillis();
         try {
-            logger.info("[AOP START] {} args={}",//
+            logger.info("[MAGIC_AOP_TRACE START] {} args={}",//
                 methodSignature, toText(method, args));
             Object result = methodInvoker.call();
             if (method.getReturnType() == void.class) {
-                logger.info("[AOP END  ] {} elapsedTime={}ms",//
+                logger.info("[MAGIC_AOP_TRACE END  ] {} elapsedTime={}ms",//
                     methodSignature,//
                     TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
             } else {
-                logger.info("[AOP END  ] {} result={} elapsedTime={}ms",//
+                logger.info("[MAGIC_AOP_TRACE END  ] {} result={} elapsedTime={}ms",//
                     methodSignature,//
                     toText(result),//
                     TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
@@ -51,7 +51,7 @@ public class LoggingInterceptor {
 
             return result;
         } catch (Exception e) {
-            logger.error("[AOP ERROR] {} elapsedTime={}ms",//
+            logger.error("[MAGIC_AOP_TRACE ERROR] {} elapsedTime={}ms",//
                 methodSignature,//
                 TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime), e);
             throw e;
