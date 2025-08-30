@@ -25,11 +25,12 @@ public class MagicAopParameterProvider {
             } else {
                 String key = keyValue.substring(0, index);
                 String value = keyValue.substring(index + 1);
+                Path path = Path.of(value);
                 switch (key) {
                     case "libdir" -> //
-                        parameter.setLibraryDirectory(Path.of(value));
+                        parameter.setLibraryDirectory(path);
                     case "config" -> //
-                        parameter.setConfigFile(Path.of(value));
+                        parameter.setConfigFile(path);
                     case "loglevel" -> //
                         parameter.setLogLevel(MagicAopLogLevel.valueOf(value));
                     default -> throw new IllegalArgumentException("Unknown key: " + key);
