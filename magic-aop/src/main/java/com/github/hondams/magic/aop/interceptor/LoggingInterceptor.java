@@ -1,13 +1,13 @@
 package com.github.hondams.magic.aop.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.hondams.magic.aop.util.NanoTimeUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
@@ -34,7 +34,7 @@ public class LoggingInterceptor {
 
         Logger logger = LoggerFactory.getLogger(methodClass);
 
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         try {
             logger.info("[MAGIC_AOP_TRACE START] {} args={}",//
                 methodSignature, toText(method, args));
@@ -42,19 +42,19 @@ public class LoggingInterceptor {
             if (method.getReturnType() == void.class) {
                 logger.info("[MAGIC_AOP_TRACE END  ] {} elapsedTime={}ms",//
                     methodSignature,//
-                    TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
+                    NanoTimeUtils.toMillis(System.nanoTime() - startTime));
             } else {
                 logger.info("[MAGIC_AOP_TRACE END  ] {} result={} elapsedTime={}ms",//
                     methodSignature,//
                     toText(result),//
-                    TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime));
+                    NanoTimeUtils.toMillis(System.nanoTime() - startTime));
             }
 
             return result;
         } catch (Exception e) {
             logger.error("[MAGIC_AOP_TRACE ERROR] {} elapsedTime={}ms",//
                 methodSignature,//
-                TimeUnit.NANOSECONDS.toMicros(System.currentTimeMillis() - startTime), e);
+                NanoTimeUtils.toMillis(System.nanoTime() - startTime), e);
             throw e;
         }
     }
