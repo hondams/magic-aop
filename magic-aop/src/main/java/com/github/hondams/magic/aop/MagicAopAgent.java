@@ -27,7 +27,7 @@ public class MagicAopAgent {
         MagicAopModule module = new ByteBuddyAopModule();
         module.install(inst);
 
-        MagicAopLogger.info("installed: " + parameter);
+        MagicAopLogger.info("Installed MagicAop: " + parameter);
     }
 
     private static void appendToSystemClassLoader(Instrumentation inst, Path libraryDirectory) {

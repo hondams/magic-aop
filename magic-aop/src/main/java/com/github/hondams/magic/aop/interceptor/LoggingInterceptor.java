@@ -17,6 +17,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unused")
 public class LoggingInterceptor {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

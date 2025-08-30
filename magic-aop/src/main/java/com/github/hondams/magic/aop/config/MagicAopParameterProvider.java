@@ -38,6 +38,9 @@ public class MagicAopParameterProvider {
         }
 
         validate(parameter);
+
+        parameter.setInterceptors(
+            MagicAopInterceptorConfigFactory.createList(parameter.getConfigFile()));
     }
 
     private void validate(MagicAopParameter parameter) {

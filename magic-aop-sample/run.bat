@@ -9,5 +9,6 @@ for %%I in ("%JAVA_AGENT_JAR%") do set JAVA_AGENT_JAR=%%~fI
 for %%I in ("%MAGIC_AOP_LIB_DIR%") do set MAGIC_AOP_LIB_DIR=%%~fI
 for %%I in ("%MAGIC_AOP_CONFIG%") do set MAGIC_AOP_CONFIG=%%~fI
 
-java -javaagent:%JAVA_AGENT_JAR%=libdir=%MAGIC_AOP_LIB_DIR%;config=%MAGIC_AOP_CONFIG%;loglevel=DEBUG -jar %EXECUTION_JAR%
+set JAVA_TOOL_OPTIONS=-javaagent:%JAVA_AGENT_JAR%=libdir=%MAGIC_AOP_LIB_DIR%;config=%MAGIC_AOP_CONFIG%;loglevel=DEBUG
+java -jar %EXECUTION_JAR%
 pause
