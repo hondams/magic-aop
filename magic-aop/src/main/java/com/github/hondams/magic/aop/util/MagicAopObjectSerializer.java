@@ -74,9 +74,9 @@ public class MagicAopObjectSerializer {
         } else if (obj instanceof Set<?>) {
             // @set=, items=
             return toSetMap((Set<?>) obj);
-        } else if (obj instanceof Map<?, ?> map) {
+        } else if (obj instanceof Map<?, ?>) {
             // @map=, entries={key=,value=}
-            return toMapMap(map);
+            return toMapMap((Map<?, ?>) obj);
         } else if (obj instanceof Collection<?>) {
             // @collection=, items=
             return toCollectionMap((Collection<?>) obj);
