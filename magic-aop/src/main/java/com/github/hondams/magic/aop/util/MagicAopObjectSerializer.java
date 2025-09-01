@@ -49,7 +49,7 @@ public class MagicAopObjectSerializer {
         valueSerializerMap.put(valueType, valueSerializer);
     }
 
-    private final IdentityHashMap<Object, Integer> objectIdMap = new IdentityHashMap<>();
+    private final Map<Object, Integer> objectIdMap = new IdentityHashMap<>();
 
     public Object serialize(Object obj) {
         if (obj == null) {
@@ -228,7 +228,7 @@ public class MagicAopObjectSerializer {
     }
 
     private Map<?, ?> getOriginalMap(Map<?, ?> obj) {
-        Class<?> unmodifiableClass = MagicAopReflectionUtils.findSuperClass(obj.getClass(),
+        Class<?> unmodifiableClass = ClassUtils.findSuperClass(obj.getClass(),
             "java.util.Collections$UnmodifiableMap");
         if (unmodifiableClass == null) {
             throw new IllegalStateException("Not an unmodifiable map: " + obj.getClass().getName());
@@ -244,7 +244,7 @@ public class MagicAopObjectSerializer {
 
 
     private Collection<?> getOriginalCollection(Collection<?> obj) {
-        Class<?> unmodifiableClass = MagicAopReflectionUtils.findSuperClass(obj.getClass(),
+        Class<?> unmodifiableClass = ClassUtils.findSuperClass(obj.getClass(),
             "java.util.Collections$UnmodifiableCollection");
         if (unmodifiableClass == null) {
             throw new IllegalStateException(

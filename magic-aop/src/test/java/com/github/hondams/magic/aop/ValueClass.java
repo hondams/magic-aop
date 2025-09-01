@@ -6,5 +6,4 @@ import lombok.Value;
 public class ValueClass {
 
     String field1;
-    int field2;
 }

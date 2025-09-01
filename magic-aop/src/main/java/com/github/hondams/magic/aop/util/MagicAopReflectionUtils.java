@@ -293,15 +293,4 @@ public class MagicAopReflectionUtils {
         return fieldMap;
     }
 
-
-    public Class<?> findSuperClass(Class<?> type, String superClassName) {
-        Class<?> superClass = type;
-        while (superClass != null) {
-            if (superClass.getName().equals(superClassName)) {
-                return superClass;
-            }
-            superClass = superClass.getSuperclass();
-        }
-        return null;
-    }
 }
