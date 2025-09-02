@@ -3,6 +3,9 @@ package com.github.hondams.magic.aop;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.hondams.magic.aop.model.DataClass;
+import com.github.hondams.magic.aop.model.SubDataClass;
+import com.github.hondams.magic.aop.model.ValueClass;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

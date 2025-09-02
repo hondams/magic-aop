@@ -5,13 +5,16 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MagicAopObjectDeserializer {
@@ -48,14 +52,26 @@ public class MagicAopObjectDeserializer {
             MagicAopValueDeserializer.create(DateUtils::toLocalTime));
         valueDeserializerMap.put(LocalDate.class.getName(),//
             MagicAopValueDeserializer.create(DateUtils::toLocalDate));
-        valueDeserializerMap.put(Date.class.getName(),//
+        valueDeserializerMap.put(ZonedDateTime.class.getName(),//
+            MagicAopValueDeserializer.create(DateUtils::toZonedDateTime));
+        valueDeserializerMap.put(OffsetDateTime.class.getName(),//
+            MagicAopValueDeserializer.create(DateUtils::toOffsetDateTime));
+        valueDeserializerMap.put(java.util.Date.class.getName(),//
             MagicAopValueDeserializer.create(DateUtils::toDate));
         valueDeserializerMap.put(java.sql.Date.class.getName(),//
-            MagicAopValueDeserializer.create(DateUtils::toJavaSqlDate));
+            MagicAopValueDeserializer.create(DateUtils::toSqlDate));
         valueDeserializerMap.put(java.sql.Time.class.getName(),//
-            MagicAopValueDeserializer.create(DateUtils::toJavaSqlTime));
+            MagicAopValueDeserializer.create(DateUtils::toSqlTime));
         valueDeserializerMap.put(java.sql.Timestamp.class.getName(),//
-            MagicAopValueDeserializer.create(DateUtils::toJavaSqlTimestamp));
+            MagicAopValueDeserializer.create(DateUtils::toSqlTimestamp));
+        valueDeserializerMap.put(UUID.class.getName(),//
+            MagicAopValueDeserializer.create(UUID::fromString));
+        valueDeserializerMap.put(URL.class.getName(),//
+            MagicAopValueDeserializer.create(UrlUtils::toUrl));
+        valueDeserializerMap.put(URI.class.getName(),//
+            MagicAopValueDeserializer.create(URI::create));
+        valueDeserializerMap.put(byte[].class.getName(),//
+            MagicAopValueDeserializer.create(ByteArrayUtils::fromHex));
     }
 
     public static void registerValueSerializer(Class<?> valueType,

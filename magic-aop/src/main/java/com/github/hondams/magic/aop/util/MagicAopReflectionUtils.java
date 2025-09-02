@@ -285,7 +285,6 @@ public class MagicAopReflectionUtils {
                     } else {
                         fieldMap.put(name, field);
                     }
-                    fieldMap.put(name, field);
                 }
             }
             currentType = currentType.getSuperclass();

@@ -1,4 +1,4 @@
-package com.github.hondams.magic.aop;
+package com.github.hondams.magic.aop.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

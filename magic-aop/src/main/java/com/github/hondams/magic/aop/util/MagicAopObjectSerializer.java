@@ -4,20 +4,26 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MagicAopObjectSerializer {
 
     private static final Map<Class<?>, MagicAopValueSerializer> valueSerializerMap = new ConcurrentHashMap<>();
@@ -34,14 +40,19 @@ public class MagicAopObjectSerializer {
         valueSerializerMap.put(LocalDateTime.class, MagicAopValueSerializer.DEFAULT);
         valueSerializerMap.put(LocalTime.class, MagicAopValueSerializer.DEFAULT);
         valueSerializerMap.put(LocalDate.class, MagicAopValueSerializer.DEFAULT);
-        valueSerializerMap.put(java.util.Date.class,//
-            MagicAopValueSerializer.create(Date::toString));
-        valueSerializerMap.put(java.sql.Date.class,//
-            MagicAopValueSerializer.create(Date::toString));
-        valueSerializerMap.put(java.sql.Time.class,//
-            MagicAopValueSerializer.create(Date::toString));
-        valueSerializerMap.put(java.sql.Timestamp.class,//
-            MagicAopValueSerializer.create(Date::toString));
+        valueSerializerMap.put(ZonedDateTime.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(OffsetDateTime.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(java.util.Date.class,
+            MagicAopValueSerializer.create((java.util.Date obj) -> DateUtils.toString(obj)));
+        valueSerializerMap.put(java.sql.Date.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(java.sql.Time.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(java.sql.Timestamp.class,
+            MagicAopValueSerializer.create((java.sql.Timestamp obj) -> DateUtils.toString(obj)));
+        valueSerializerMap.put(UUID.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(URL.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(URI.class, MagicAopValueSerializer.DEFAULT);
+        valueSerializerMap.put(byte[].class,//
+            MagicAopValueSerializer.create(ByteArrayUtils::toHex));
     }
 
     public static void registerValueSerializer(Class<?> valueType,
