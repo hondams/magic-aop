@@ -15,7 +15,7 @@ public interface MagicAopValueSerializer {
         return obj -> {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("@value", obj.getClass().getName());
-            map.put("text", textSelector.apply((T) obj));
+            map.put("@text", textSelector.apply((T) obj));
             return map;
         };
     }

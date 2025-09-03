@@ -131,7 +131,7 @@ public class MagicAopObjectSerializer {
             Object item = Array.get(obj, i);
             items.add(serialize(item));
         }
-        map.put("items", items);
+        map.put("@items", items);
         return map;
     }
 
@@ -148,7 +148,7 @@ public class MagicAopObjectSerializer {
         for (Object item : obj) {
             items.add(serialize(item));
         }
-        map.put("items", items);
+        map.put("@items", items);
         return map;
     }
 
@@ -165,7 +165,7 @@ public class MagicAopObjectSerializer {
         for (Object item : obj) {
             items.add(serialize(item));
         }
-        map.put("items", items);
+        map.put("@items", items);
         return map;
     }
 
@@ -182,7 +182,7 @@ public class MagicAopObjectSerializer {
         for (Object item : obj) {
             items.add(serialize(item));
         }
-        map.put("items", items);
+        map.put("@items", items);
         return map;
     }
 
@@ -198,11 +198,11 @@ public class MagicAopObjectSerializer {
         List<Map<String, Object>> entries = new ArrayList<>();
         for (Map.Entry<?, ?> entry : obj.entrySet()) {
             Map<String, Object> entryMap = new LinkedHashMap<>();
-            entryMap.put("key", serialize(entry.getKey()));
-            entryMap.put("value", serialize(entry.getValue()));
+            entryMap.put("@key", serialize(entry.getKey()));
+            entryMap.put("@value", serialize(entry.getValue()));
             entries.add(entryMap);
         }
-        map.put("entries", entries);
+        map.put("@entries", entries);
         return map;
     }
 

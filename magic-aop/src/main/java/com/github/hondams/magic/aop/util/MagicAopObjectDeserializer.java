@@ -138,7 +138,7 @@ public class MagicAopObjectDeserializer {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Object toValue(Map<String, Object> map) {
         String valueTypeName = (String) map.get("@value");
-        String text = (String) map.get("text");
+        String text = (String) map.get("@text");
 
         MagicAopValueDeserializer valueDeserializer = valueDeserializerMap.get(valueTypeName);
         if (valueDeserializer != null) {
@@ -154,6 +154,7 @@ public class MagicAopObjectDeserializer {
 
     @SuppressWarnings("unchecked")
     private Object toArray(Map<String, Object> map) {
+
         String arrayTypeName = (String) map.get("@array");
         int length = (int) map.get("@length");
         List<Object> items = (List<Object>) map.get("@items");
@@ -176,36 +177,54 @@ public class MagicAopObjectDeserializer {
         String readonly = (String) map.get("@readonly");
         List<Object> items = (List<Object>) map.get("@items");
 
-        Class<?> listType = ClassUtils.getClass(listTypeName);
-        List<Object> obj = (List<Object>) ClassUtils.tryNewInstance(listType);
-        if (obj == null) {
-            obj = new ArrayList<>();
-            MagicAopLogger.warn(
-                "Failed to create instance of list: " + listTypeName + ", use ArrayList instead.");
-        }
-        String errorMessage = null;
-        for (Object item : items) {
-            Object value = deserialize(item);
-            try {
-                obj.add(value);
-            } catch (Exception e) {
-                errorMessage = e.getMessage();
-                break;
+        if ("java.util.Collections$EmptyList".equals(listTypeName)) {
+            return Collections.emptyList();
+        } else if ("java.util.Collections$SingletonList".equals(listTypeName)) {
+            if (items.size() != 1) {
+                throw new IllegalStateException(
+                    "Invalid items size for SingletonList: " + items.size());
             }
-        }
-        if (errorMessage != null) {
-            MagicAopLogger.warn("Failed to to add item to list: " + listTypeName
-                + ", use ArrayList instead. error: " + errorMessage);
-            obj = new ArrayList<>();
+            Object item = deserialize(items.get(0));
+            return Collections.singletonList(item);
+        } else if (listTypeName.startsWith("java.util.ImmutableCollections$")) {
+            List<Object> obj = new ArrayList<>();
             for (Object item : items) {
                 Object value = deserialize(item);
                 obj.add(value);
             }
+            return List.of(obj.toArray());
+        } else {
+            Class<?> listType = ClassUtils.getClass(listTypeName);
+            List<Object> obj = (List<Object>) ClassUtils.tryNewInstance(listType);
+            if (obj == null) {
+                obj = new ArrayList<>();
+                MagicAopLogger.warn("Failed to create instance of list: " + listTypeName
+                    + ", use ArrayList instead.");
+            }
+            String errorMessage = null;
+            for (Object item : items) {
+                Object value = deserialize(item);
+                try {
+                    obj.add(value);
+                } catch (Exception e) {
+                    errorMessage = e.getMessage();
+                    break;
+                }
+            }
+            if (errorMessage != null) {
+                MagicAopLogger.warn("Failed to to add item to list: " + listTypeName
+                    + ", use ArrayList instead. error: " + errorMessage);
+                obj = new ArrayList<>();
+                for (Object item : items) {
+                    Object value = deserialize(item);
+                    obj.add(value);
+                }
+            }
+            if (readonly != null) {
+                obj = Collections.unmodifiableList(obj);
+            }
+            return obj;
         }
-        if (readonly != null) {
-            obj = Collections.unmodifiableList(obj);
-        }
-        return obj;
     }
 
     @SuppressWarnings("unchecked")
@@ -214,36 +233,54 @@ public class MagicAopObjectDeserializer {
         String readonly = (String) map.get("@readonly");
         List<Object> items = (List<Object>) map.get("@items");
 
-        Class<?> setType = ClassUtils.getClass(setTypeName);
-        Set<Object> obj = (Set<Object>) ClassUtils.tryNewInstance(setType);
-        if (obj == null) {
-            obj = new LinkedHashSet<>();
-            MagicAopLogger.warn("Failed to create instance of set: " + setTypeName
-                + ", use LinkedHashSet instead.");
-        }
-        String errorMessage = null;
-        for (Object item : items) {
-            Object value = deserialize(item);
-            try {
-                obj.add(value);
-            } catch (Exception e) {
-                errorMessage = e.getMessage();
-                break;
+        if ("java.util.Collections$EmptySet".equals(setTypeName)) {
+            return Collections.emptySet();
+        } else if ("java.util.Collections$SingletonSet".equals(setTypeName)) {
+            if (items.size() != 1) {
+                throw new IllegalStateException(
+                    "Invalid items size for SingletonSet: " + items.size());
             }
-        }
-        if (errorMessage != null) {
-            MagicAopLogger.warn("Failed to to add item to set: " + setTypeName
-                + ", use LinkedHashSet instead. error: " + errorMessage);
-            obj = new LinkedHashSet<>();
+            Object item = deserialize(items.get(0));
+            return Collections.singleton(item);
+        } else if (setTypeName.startsWith("java.util.ImmutableCollections$")) {
+            List<Object> obj = new ArrayList<>();
             for (Object item : items) {
                 Object value = deserialize(item);
                 obj.add(value);
             }
+            return Set.of(obj.toArray());
+        } else {
+            Class<?> setType = ClassUtils.getClass(setTypeName);
+            Set<Object> obj = (Set<Object>) ClassUtils.tryNewInstance(setType);
+            if (obj == null) {
+                obj = new LinkedHashSet<>();
+                MagicAopLogger.warn("Failed to create instance of set: " + setTypeName
+                    + ", use LinkedHashSet instead.");
+            }
+            String errorMessage = null;
+            for (Object item : items) {
+                Object value = deserialize(item);
+                try {
+                    obj.add(value);
+                } catch (Exception e) {
+                    errorMessage = e.getMessage();
+                    break;
+                }
+            }
+            if (errorMessage != null) {
+                MagicAopLogger.warn("Failed to to add item to set: " + setTypeName
+                    + ", use LinkedHashSet instead. error: " + errorMessage);
+                obj = new LinkedHashSet<>();
+                for (Object item : items) {
+                    Object value = deserialize(item);
+                    obj.add(value);
+                }
+            }
+            if (readonly != null) {
+                obj = Collections.unmodifiableSet(obj);
+            }
+            return obj;
         }
-        if (readonly != null) {
-            obj = Collections.unmodifiableSet(obj);
-        }
-        return obj;
     }
 
     @SuppressWarnings("unchecked")
@@ -288,40 +325,61 @@ public class MagicAopObjectDeserializer {
     private Map<?, ?> toMap(Map<String, Object> map) {
         String mapTypeName = (String) map.get("@map");
         String readonly = (String) map.get("@readonly");
-        List<Map<String, Object>> entries = (List<Map<String, Object>>) map.get("entries");
+        List<Map<String, Object>> entries = (List<Map<String, Object>>) map.get("@entries");
 
-        Class<?> mapType = ClassUtils.getClass(mapTypeName);
-        Map<Object, Object> obj = (Map<Object, Object>) ClassUtils.tryNewInstance(mapType);
-        if (obj == null) {
-            obj = new LinkedHashMap<>();
-            MagicAopLogger.warn("Failed to create instance of map: " + mapTypeName
-                + ", use LinkedHashMap instead.");
-        }
-        String errorMessage = null;
-        for (Map<String, Object> entry : entries) {
-            Object key = deserialize(entry.get("key"));
-            Object value = deserialize(entry.get("value"));
-            try {
-                obj.put(key, value);
-            } catch (Exception e) {
-                errorMessage = e.getMessage();
-                break;
+        if ("java.util.Collections$EmptyMap".equals(mapTypeName)) {
+            return Collections.emptyMap();
+        } else if ("java.util.Collections$SingletonMap".equals(mapTypeName)) {
+            if (entries.size() != 1) {
+                throw new IllegalStateException(
+                    "Invalid items size for SingletonMap: " + entries.size());
             }
-        }
-        if (errorMessage != null) {
-            MagicAopLogger.warn("Failed to to put entry to map: " + mapTypeName
-                + ", use LinkedHashMap instead. error: " + errorMessage);
-            obj = new LinkedHashMap<>();
+            Map<String, Object> entry = entries.get(0);
+            Object key = deserialize(entry.get("@key"));
+            Object value = deserialize(entry.get("@value"));
+            return Collections.singletonMap(key, value);
+        } else if (mapTypeName.startsWith("java.util.ImmutableCollections$")) {
+            List<Map.Entry<?, ?>> obj = new ArrayList<>();
             for (Map<String, Object> entry : entries) {
-                Object key = deserialize(entry.get("key"));
-                Object value = deserialize(entry.get("value"));
-                obj.put(key, value);
+                Object key = deserialize(entry.get("@key"));
+                Object value = deserialize(entry.get("@value"));
+                obj.add(Map.entry(key, value));
             }
+            return Map.ofEntries(obj.toArray(new Map.Entry<?, ?>[0]));
+        } else {
+            Class<?> mapType = ClassUtils.getClass(mapTypeName);
+            Map<Object, Object> obj = (Map<Object, Object>) ClassUtils.tryNewInstance(mapType);
+            if (obj == null) {
+                obj = new LinkedHashMap<>();
+                MagicAopLogger.warn("Failed to create instance of map: " + mapTypeName
+                    + ", use LinkedHashMap instead.");
+            }
+            String errorMessage = null;
+            for (Map<String, Object> entry : entries) {
+                Object key = deserialize(entry.get("@key"));
+                Object value = deserialize(entry.get("@value"));
+                try {
+                    obj.put(key, value);
+                } catch (Exception e) {
+                    errorMessage = e.getMessage();
+                    break;
+                }
+            }
+            if (errorMessage != null) {
+                MagicAopLogger.warn("Failed to to put entry to map: " + mapTypeName
+                    + ", use LinkedHashMap instead. error: " + errorMessage);
+                obj = new LinkedHashMap<>();
+                for (Map<String, Object> entry : entries) {
+                    Object key = deserialize(entry.get("@key"));
+                    Object value = deserialize(entry.get("@value"));
+                    obj.put(key, value);
+                }
+            }
+            if (readonly != null) {
+                obj = Collections.unmodifiableMap(obj);
+            }
+            return obj;
         }
-        if (readonly != null) {
-            obj = Collections.unmodifiableMap(obj);
-        }
-        return obj;
     }
 
     private Object toObject(Map<String, Object> map) {
@@ -338,9 +396,7 @@ public class MagicAopObjectDeserializer {
 
         Class<?> type = ClassUtils.getClass(className);
         Object obj = MagicAopReflectionUtils.newInstanceForSerialization(type);
-        if (id != null) {
-            this.idObjectMap.put(id, obj);
-        }
+        this.idObjectMap.put(id, obj);
 
         Map<String, Field> fieldMap = MagicAopReflectionUtils.getInstanceFieldMap(obj.getClass());
         for (Map.Entry<String, Object> entry : map.entrySet()) {
