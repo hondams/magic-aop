@@ -2,7 +2,6 @@ package com.github.hondams.magic.aop.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class DateUtilsTest {
@@ -22,10 +21,5 @@ public class DateUtilsTest {
             java.time.ZoneId.of("Asia/Tokyo")));
         System.out.println(java.time.OffsetDateTime.of(2022, 4, 7, 14, 15, 16, 456,
             java.time.ZoneOffset.ofHours(9)));
-    }
-
-    @Test
-    void test() {
-        System.out.println(List.of("aaa").set(0, "bbb"));
     }
 }

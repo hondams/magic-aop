@@ -36,6 +36,15 @@ public class ClassUtils {
     }
 
 
+    public Object newInstance(Class<?> type) {
+        try {
+            return type.getDeclaredConstructor().newInstance();
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public Object tryNewInstance(Class<?> type) {
         try {
             return type.getDeclaredConstructor().newInstance();
